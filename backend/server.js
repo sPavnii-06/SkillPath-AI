@@ -18,7 +18,7 @@ await connectDB();
 const app = express();
 const PORT = process.env.PORT;
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://skill-path-ai-nine.vercel.app',
     credentials: true
 }));
 app.use(express.json());
