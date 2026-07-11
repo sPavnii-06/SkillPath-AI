@@ -21,18 +21,24 @@ const RoadmapPage = () => {
   const [lessonData, setLessonData] = useState({ open: false, topic: '', content: '', loading: false })
   const [quizData, setQuizData] = useState({ open: false, topic: '', content: null, loading: false })
 
-  // --- MULTI-COURSE CONTAINER STATES ---
-  const [history, setHistory] = useState([])
+  // --- MULTI-COURSE CONTAINER STATES WITH LOCALSTORAGE PERSISTENCE ---
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem('skillpath_history')
+    return saved ? JSON.parse(saved) : []
+  })
   const [activeRoadmap, setActiveRoadmap] = useState(null)
   const [showHistoryView, setShowHistoryView] = useState(false)
 
-  // Track and collect generated roadmaps automatically
+  // Track and collect generated roadmaps automatically into localStorage
   useEffect(() => {
     if (roadmap) {
       setActiveRoadmap(roadmap)
       setHistory((prev) => {
+        // Prevent duplicate roadmap entries in sidebar history
         if (prev.some((item) => (item._id || item.id) === (roadmap._id || roadmap.id))) return prev
-        return [roadmap, ...prev]
+        const updated = [roadmap, ...prev]
+        localStorage.setItem('skillpath_history', JSON.stringify(updated))
+        return updated
       })
     }
   }, [roadmap])
@@ -118,7 +124,6 @@ const RoadmapPage = () => {
           flexDirection: 'column',
           gap: 'var(--space-4)'
         }}>
-          {/* Action button to allow students to generate brand-new courses */}
           <Button 
             variant="secondary" 
             size="sm" 
@@ -140,7 +145,7 @@ const RoadmapPage = () => {
             ⭐ Current Active View
           </Button>
 
-          <h4 style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+          <h4 style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: 'var(--space-2)' }}>
             Your Courses History
           </h4>
 
@@ -236,7 +241,7 @@ const RoadmapPage = () => {
                       {!done && !showHistoryView && (
                         <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'var(--space-4)' }}>
                           <Button variant="secondary" size="sm" onClick={() => handleLearn(step)} isLoading={lessonData.open && lessonData.topic === step.title && lessonData.loading}>
-                            📖 Learn Now
+                            ... Learn Now
                           </Button>
                           <Button variant="ghost" size="sm" onClick={() => handleQuiz(step)} isLoading={quizData.open && quizData.topic === step.title && quizData.loading}>
                             🧠 Test Knowledge
