@@ -1,21 +1,7 @@
 import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { FiX, FiBookOpen, FiVideo, FiSearch, FiLayers, FiExternalLink, FiInfo } from 'react-icons/fi'
+import { FiX, FiBookOpen, FiVideo, FiSearch, FiLayers, FiExternalLink } from 'react-icons/fi'
 import Button from '../ui/Button'
-
-const getCourseVideo = (topic) => {
-  const t = (topic || '').toLowerCase()
-  
-  // High-Impact, globally embed-permissive education streams
-  if (t.includes('python')) return "https://www.youtube.com/embed/rfscVS0vtbw" // FreeCodeCamp Python Course
-  if (t.includes('java')) return "https://www.youtube.com/embed/2dZiMBwXp9Y" // Computer Science Java Fundamentals
-  if (t.includes('c++') || t.includes('cpp') || t.includes('operator')) return "https://www.youtube.com/embed/vLnPwxZdW4Y" // C++ Programming Crash Course
-  if (t.includes('machine learning') || t.includes('data')) return "https://www.youtube.com/embed/GwIo3gEJu3A"
-  if (t.includes('cyber') || t.includes('security')) return "https://www.youtube.com/embed/nzj7FwIFc04"
-  
-  // General production fallback embed link
-  return "https://www.youtube.com/embed/zJSY8tBF_zk"
-}
 
 const LessonModal = ({ isOpen, onClose, topic, lesson }) => {
   const [activeTab, setActiveTab] = useState('notes')
@@ -30,7 +16,8 @@ const LessonModal = ({ isOpen, onClose, topic, lesson }) => {
 
   if (!isOpen) return null
 
-  const videoUrl = getCourseVideo(topic)
+  // Safely encode the topic for clean, copyright-filtered external redirection
+  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(topic + ' tutorial full course')}`
 
   const getFilteredContent = () => {
     if (!lesson) return "Loading educational modules..."
@@ -44,7 +31,7 @@ const LessonModal = ({ isOpen, onClose, topic, lesson }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(10, 10, 15, 0.85)', backdropFilter: 'blur(6px)', position: 'fixed', inset: 0, zIndex: 9999 }}>
-      <div className="modal-box animate-fade-up" style={{ maxWidth: '850px', width: '95%', padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '82vh', background: '#13131a', border: '1px solid rgba(255,255,255,0.08)' }} onClick={e => e.stopPropagation()}>
+      <div className="modal-box animate-fade-up" style={{ maxWidth: '800px', width: '95%', padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '75vh', background: '#13131a', border: '1px solid rgba(255,255,255,0.08)' }} onClick={e => e.stopPropagation()}>
         
         {/* MODAL HEADER */}
         <div className="modal-header" style={{ padding: 'var(--space-4) var(--space-6)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
@@ -78,7 +65,7 @@ const LessonModal = ({ isOpen, onClose, topic, lesson }) => {
                 borderBottom: activeTab === 'video' ? '3px solid #ef4444' : '3px solid transparent',
               }}
             >
-              <FiVideo /> Recommended Tutorials
+              <FiVideo /> Recommended Video Tutorials
             </button>
           </div>
 
@@ -103,6 +90,7 @@ const LessonModal = ({ isOpen, onClose, topic, lesson }) => {
         {/* WORKSPACE CONTENT AREA */}
         <div className="lesson-content" style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-6)', background: '#161622' }}>
           
+          {/* TAB 1: NOTES */}
           {activeTab === 'notes' && (
             <div style={{ color: '#e4e4e7', fontSize: '1.05rem', lineHeight: '1.8' }}>
               <div className="markdown-structured-body">
@@ -111,31 +99,29 @@ const LessonModal = ({ isOpen, onClose, topic, lesson }) => {
             </div>
           )}
 
+          {/* TAB 2: STREAMING HUBS DASHBOARD */}
           {activeTab === 'video' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
-              <div style={{ background: 'rgba(79, 70, 229, 0.1)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(79, 70, 229, 0.2)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <FiInfo style={{ color: 'var(--color-accent)', flexShrink: 0 }} />
-                <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)' }}>
-                  Playing verified public domain interactive guide structure for: <strong>{topic}</strong>.
-                </p>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-8) 0', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '20px', borderRadius: '50%', marginBottom: '20px' }}>
+                <FiVideo style={{ fontSize: '3rem', color: '#ef4444', display: 'block' }} />
               </div>
+              
+              <h3 style={{ color: '#fff', marginBottom: '8px', fontSize: 'var(--text-lg)' }}>External Media Stream Linker</h3>
+              <p style={{ color: 'var(--color-text-secondary)', maxWidth: '500px', fontSize: 'var(--text-sm)', lineHeight: 1.6, marginBottom: '24px' }}>
+                To comply perfectly with global copyright standards and prevent iframe rendering blockages, video resources are dynamically isolated per topic step.
+              </p>
 
-              <div style={{ width: '100%', aspectRatio: '16/9', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', background: '#000' }}>
-                <iframe 
-                  width="100%" height="100%" 
-                  src={videoUrl} 
-                  title="Video Player" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                ></iframe>
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
-                <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(topic + ' crash course')}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', width: '100%' }}>
-                  <div style={{ padding: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '6px', color: '#fff', textAlign: 'center', fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    Open External YouTube Search Resource <FiExternalLink />
-                  </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', maxWidth: '400px' }}>
+                <a href={searchUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                  <Button variant="primary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#ef4444', borderColor: '#ef4444', padding: '12px' }}>
+                    Stream Filtered Videos on YouTube <FiExternalLink />
+                  </Button>
+                </a>
+                
+                <a href={`https://www.google.com/search?q=${encodeURIComponent(topic + ' documentation technical')}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                  <Button variant="secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '12px' }}>
+                    Open Technical Documentation Reference <FiExternalLink />
+                  </Button>
                 </a>
               </div>
             </div>
