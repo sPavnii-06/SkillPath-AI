@@ -5,7 +5,7 @@ import api from '../utils/axios'
 import Button from '../components/ui/Button'
 import toast from 'react-hot-toast'
 
-const goals = ['Web Development', 'Data Science', 'Machine Learning', 'Mobile Development', 'DevOps & Cloud', 'UI/UX Design', 'Cybersecurity', 'Blockchain']
+const goals = ['Web Development', 'Data Science', 'Machine Learning', 'Mobile Development', 'DevOps & Cloud', 'UI/UX Design', 'Cybersecurity', 'Python Programming', 'Java Language', 'C++ Programming']
 const levels = [
   { value: 'beginner', label: 'Beginner', desc: 'Just starting out — little to no experience', emoji: '🌱' },
   { value: 'intermediate', label: 'Intermediate', desc: 'Have some basics — want to go deeper', emoji: '🚀' },

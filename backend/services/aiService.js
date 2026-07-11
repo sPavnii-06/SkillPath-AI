@@ -147,23 +147,25 @@ export const generateStepLesson = async (topic, description) => {
   }
 
   const prompt = `
-    You are a master teacher. Create a concise, high-impact mini-lesson on the topic: "${topic}".
-    Context: ${description}
+    You are an expert university professor and technical mentor teaching the specific topic: "${topic}".
+    Context/Context details: ${description}
     
-    Structure your response with:
-    1. A clear, 1-sentence summary.
-    2. 3-4 bullet points of core concepts.
-    3. A practical code example or analogy.
-    4. A "Pro Tip".
+    CRITICAL QUALITY RULE: Do NOT use high-level summaries, generic templates, or placeholder definitions like "Basics of a Field" or "Key Players". Instead, deliver deep, concrete, real-world educational value tailored exactly to this topic.
     
-    Use professional markdown formatting. Keep it under 250 words.
+    Structure your response cleanly using professional markdown formatting:
+    1. **Detailed Overview**: Write a clear, 2-3 sentence technical breakdown explaining exactly *what* this concept is and *why* developers use it.
+    2. **Core Concepts**: Provide 3-4 highly detailed, information-dense bullet points breaking down structural patterns, mechanisms, configurations, or underlying theories.
+    3. **Implementation & Working Code**: Provide a real, concrete, syntax-accurate code example wrapped inside markdown code blocks (\`\`\`python, \`\`\`java, \`\`\`cpp, etc.) illustrating a real-world use case. If the topic is theoretical math or data science, write explicit formulas or computational steps.
+    4. **Pro Tip**: Provide a production-level optimization trick, common gotcha, or industry best practice for this exact topic.
+    
+    Make the lesson highly authoritative, clear, and comprehensive for an engineering student. Keep it dense and complete, under 350 words.
   `;
 
   try {
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'llama-3.1-8b-instant',
-      temperature: 0.5,
+      temperature: 0.4, // Keep temperature lower for accurate code syntax formatting
     });
 
     return completion.choices[0]?.message?.content || "Could not generate lesson.";
